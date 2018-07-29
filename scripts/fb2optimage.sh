@@ -3,7 +3,7 @@
 tnocomp=""
 tcomp="identify"
 [ ! "$(command -v $tcomp)" ] && tnocomp="$tnocomp $tcomp"
-tcomp="jpegtran"
+tcomp="jpegrescan"
 [ ! "$(command -v $tcomp)" ] && tnocomp="$tnocomp $tcomp"
 tcomp="gifsicle"
 [ ! "$(command -v $tcomp)" ] && tnocomp="$tnocomp $tcomp"
@@ -31,24 +31,9 @@ then
         echo "$ti: $tsz0"
         case "$TYPE" in
             JPEG)
-                tmpjp="$ti.p.$$.jpg"
-                tmpjn="$ti.n.$$.jpg"
-                jpegtran -copy none -optimize -perfect -progressive -outfile "$tmpjp" "$ti"
-                jpegtran -copy none -optimize -perfect -outfile "$tmpjn" "$ti"
-                if [ -f "$tmpjp" -a -f "$tmpjn" ]; then
-                    S_PROG=$(stat -c %s "$tmpjp")
-                    S_NORM=$(stat -c %s "$tmpjn")
-                    echo " normal: $S_NORM"
-                    echo " progressive: $S_PROG"
-                    if [ $S_PROG -ge $S_NORM ]
-                    then
-                        mv -f "$tmpjn" "$ti"
-                        rm -f "$tmpjp"
-                    else
-                        mv -f "$tmpjp" "$ti"
-                        rm -f "$tmpjn"
-                    fi
-                fi
+                jpegrescan -s "$ti" "$ti.jr.jpg"
+#                jpeg-recompress "$ti" "$ti.jr.jpg"
+                mv -f  "$ti.jr.jpg" "$ti"
             ;;
             GIF)
                 gifsicle -O2 -b "$ti"
