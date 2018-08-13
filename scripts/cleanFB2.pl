@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use cleanFB2;
+use fb2::cleanFB2;
 
 
-cleanFB2::CleanupFB2($ARGV[0]);
+fb2::cleanFB2::CleanupFB2($ARGV[0]);
