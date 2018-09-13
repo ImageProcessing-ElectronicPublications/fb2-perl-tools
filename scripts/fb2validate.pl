@@ -47,15 +47,15 @@ more information, see http://www.fsf.org/licenses/gpl.txt
 
 my $opts={};
 GetOptions(
-	help                => sub {HelpMessage(); },
-	version             => sub {VersionMessage(); },
-	    #    "keyword|w=s"      => \$opts->{'keyword'},
-#    "use-number|n"     => \$opts->{'use_number'},
-	  );
+        help                => sub {HelpMessage(); },
+        version             => sub {VersionMessage(); },
+        #"keyword|w=s"      => \$opts->{'keyword'},
+        #"use-number|n"     => \$opts->{'use_number'},
+          );
 
 my $file_name = $ARGV[0];
 my $doc;
-		  
+
 if ($file_name)
 {
   $doc = _parse_file($file_name);
@@ -63,26 +63,25 @@ if ($file_name)
 {
   $doc = _parse_stdin();
 }
-				    
+
 my $xmlschema = XML::LibXML::Schema->new( location =>'XSD/FB2.1/FictionBook2.1.xsd');
 $xmlschema->validate($doc);
- 
-print "This book is a valid fb2-book\n";	
+
+print "This book is a valid fb2-book\n";
 
 
 sub _parse_file
 {
   my $file_name=shift;
   my $parser = XML::LibXML->new();
-    
+
   my $doc = $parser->parse_file($file_name);
   return $doc;
 }
-	
+
 sub _parse_stdin
 {
   my $parser = XML::LibXML->new();
   my $doc = $parser->parse_fh(\*STDIN);
   return $doc;
 }
-	      

@@ -86,15 +86,15 @@ B<$ cat some_book.fb2>
      <p>Here is a text of a footnote</p>
    </section>
  </body>
-			      
-=back			      
+
+=back
 
 =head1 SEE ALSO
 
 http://sourceforge.net/projects/fb2-perl-tools - fb2-perl-tools project page
 
 http://www.fictionbook.org/index.php/Eng:FictionBook - fb2 community (site is mostly in Russian)
- 
+
 =head1 AUTHOR
 
 Swami Dhyan Nataraj (Nikolay Shaplov) <N@Shaplov.ru>
@@ -132,37 +132,37 @@ sub do_convert
     "keyword|w=s"	=> \$opts->{'keyword'},
     "use-number|n"	=> \$opts->{'use_number'},
   );
-  
+
   my $file_name = $ARGV[0];
-  
+
   my $doc;
-  
+
   if ($file_name)
   {
-    $doc = _parse_file($file_name);    
+    $doc = _parse_file($file_name);
   } else
   {
     $doc = _parse_stdin();
   }
-  
+
   my $changes_flag = fb2::Footnotes::ConvertFromComments($doc,{
-								"Keyword" => $opts->{'keyword'}, 
-								"UseNumber"=>$opts->{'use_number'}
-							      });
+                                                                "Keyword" => $opts->{'keyword'}, 
+                                                                "UseNumber"=>$opts->{'use_number'}
+                                                              });
   if (! $changes_flag )
   {
     print STDERR "No changes were made\n";
     return 0  unless $changes_flag;
   }
-  
+
   if ($file_name)
   {
     _update_file($file_name,$doc);
   } else
   {
     print $doc->toString();
-  } 
-  
+  }
+
   print STDERR "Comments successfully converted\n";
 }
 
@@ -176,14 +176,14 @@ sub do_renumber
     "keyword|w=s"	=> \$opts->{'keyword'},
     "use-number|n"	=> \$opts->{'use_number'},
   );
-  
+
   my $file_name = $ARGV[0];
-  
+
   my $doc;
-  
+
   if ($file_name)
   {
-    $doc = _parse_file($file_name);    
+    $doc = _parse_file($file_name);
   } else
   {
     $doc = _parse_stdin();
@@ -212,7 +212,7 @@ sub _update_file
 {
   my $file_name = shift;
   my $doc = shift;
-  
+
   my $backup = $file_name . "~";
   unlink $backup;
   rename $file_name, $backup or die("Cannot make backup copy: $!");

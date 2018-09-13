@@ -1,4 +1,18 @@
-html2fb2.pl				2011-06-21	Added limited CSS support in order to convert files form OpenOffice.org
-fb2::Description::Extend		2011-06-29	Seems to be fixes for modern perl versions
-fb2images.pl			0.02	2011-06-29	Move form XML::DOM to XML::LibXML
-fb2meta.pl			0.02	2011-06-29	Now it is possible to rename files from comand line. Patch form Alexander Batischev
+0.02.1 (2018-09-13)
+    fb2/cleanFB2.pm
+     - removing harmful spaces
+     - removing an invalid semicolon
+    *.pl/*.pm
+     - code cleaning
+
+0.02 (2011-06-29)
+    fb2meta.pl
+     - Now it is possible to rename files from comand line. Patch form Alexander Batischev
+    fb2images.pl
+     - Move form XML::DOM to XML::LibXML
+    fb2::Description::Extend
+     - Seems to be fixes for modern perl versions
+
+0.01 (2011-06-21)
+    html2fb2.pl
+     - Added limited CSS support in order to convert files form OpenOffice.org

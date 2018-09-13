@@ -32,17 +32,17 @@ sub do_extend
 {
   my $opts={};
   GetOptions(
-    help		=> sub {HelpMessage(); },
-    version		=> sub {VersionMessage(); },
-#    "keyword|w=s"	=> \$opts->{'keyword'},
-#    "use-number|n"	=> \$opts->{'use_number'},
+    help => sub {HelpMessage(); },
+    version => sub {VersionMessage(); },
+#    "keyword|w=s" => \$opts->{'keyword'},
+#    "use-number|n" => \$opts->{'use_number'},
   );
   my $file_name = $ARGV[0];
   my $doc;
-  
+
   if ($file_name)
   {
-    $doc = _parse_file($file_name);    
+    $doc = _parse_file($file_name);
   } else
   {
     $doc = _parse_stdin();
@@ -56,15 +56,15 @@ sub do_extend
 #    print STDERR "No changes were made\n";
 #    return 0  unless $changes_flag;
 #  }
-  
+
   if ($file_name)
   {
     _update_file($file_name,$doc);
   } else
   {
     print $doc->toString();
-  } 
-  
+  }
+
   print STDERR "Description successfully extended\n";
 
 }
@@ -89,7 +89,7 @@ sub _update_file
 {
   my $file_name = shift;
   my $doc = shift;
-  
+
   my $backup = $file_name . "~";
   unlink $backup;
   rename $file_name, $backup or die("Cannot make backup copy: $!");

@@ -51,9 +51,9 @@ Usage:
 fb22html  [-options] <inputfile.fb2>
 
   Options available
-   --mute		  Do not print progress messages.
-   --partsize=<number>	  Set part size (default is $SectionSize)
-   --minsize=<number>  	  Set minimum part size (default is $MinSectionSize)
+   --mute                 Do not print progress messages.
+   --partsize=<number>    Set part size (default is $SectionSize)
+   --minsize=<number>     Set minimum part size (default is $MinSectionSize)
    --outfile=<file_name>  Base name for output htmls (default is infputfile stripped of .fb2 or .xml extentions)
 
   outfile name will be used to create new files.
@@ -68,8 +68,8 @@ GetOptions ( help=>sub {HelpMessage(); },
              "mute" => \$Mute,
              'partsize=i' => \$SectionSize,
              'minsize=i'=> \$MinSectionSize,
-	     'outfile=s'=> \$OutFileName
-	    );
+             'outfile=s'=> \$OutFileName
+            );
 my $FileToParce = shift @ARGV;
 
 if (!$OutFileName)

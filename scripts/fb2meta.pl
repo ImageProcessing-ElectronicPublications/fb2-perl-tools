@@ -349,41 +349,41 @@ sub parse_init {
 # reference of the desired element of %metainfo
 #
 sub parse_start {
-	my ($handle,$element,%attrs) = @_;
-	our $context .= "/$element";
-	if ($context eq '/FictionBook/description/title-info/book-title') {
-		$metainfo{'Title'} = "";
-		$ref = \$metainfo{'Title'}
-	}
-	if ($context eq "/FictionBook/description/title-info/genre") {
-	 push @{$metainfo{"genre"}},"";
-	 $ref= \$metainfo{"genre"}[$#{$metainfo{"genre"}}];
-	}
-	if ($context eq "/FictionBook/description/title-info/sequence") {
-	 $metainfo{sequence}={$attrs{"name"},$attrs{"number"}};
-	}
-	if ($context eq "/FictionBook/description/title-info/date"||
-	    $context eq "/FictionBook/description/title-info/lang"||
-		$context eq "/FictionBook/description/title-info/src-lang") {
-		$metainfo{$element} = "";
-		$ref =\$metainfo{$element};
-	}
-	if ($context eq "/FictionBook/description/title-info/author") {
-		$aref = {};
-		push @{$metainfo{author}},$aref;
-	}
-	if ($context =~ m!/FictionBook/description/title-info/author/.*!) {
-		$aref->{$element} = "";
-		$ref = \$aref->{$element};
-	}
-	if ($context eq "/FictionBook/description/title-info/translator") {
-		$aref = {};
-		push @{$metainfo{translator}},$aref;
-	}
-	if ($context =~ m!/FictionBook/description/title-info/translator/.*!) {
-		$aref->{$element} = "";
-		$ref = \$aref->{$element};
-	}
+    my ($handle,$element,%attrs) = @_;
+    our $context .= "/$element";
+    if ($context eq '/FictionBook/description/title-info/book-title') {
+        $metainfo{'Title'} = "";
+        $ref = \$metainfo{'Title'}
+    }
+    if ($context eq "/FictionBook/description/title-info/genre") {
+     push @{$metainfo{"genre"}},"";
+     $ref= \$metainfo{"genre"}[$#{$metainfo{"genre"}}];
+    }
+    if ($context eq "/FictionBook/description/title-info/sequence") {
+     $metainfo{sequence}={$attrs{"name"},$attrs{"number"}};
+    }
+    if ($context eq "/FictionBook/description/title-info/date"||
+        $context eq "/FictionBook/description/title-info/lang"||
+        $context eq "/FictionBook/description/title-info/src-lang") {
+        $metainfo{$element} = "";
+        $ref =\$metainfo{$element};
+    }
+    if ($context eq "/FictionBook/description/title-info/author") {
+        $aref = {};
+        push @{$metainfo{author}},$aref;
+    }
+    if ($context =~ m!/FictionBook/description/title-info/author/.*!) {
+        $aref->{$element} = "";
+        $ref = \$aref->{$element};
+    }
+    if ($context eq "/FictionBook/description/title-info/translator") {
+        $aref = {};
+        push @{$metainfo{translator}},$aref;
+    }
+    if ($context =~ m!/FictionBook/description/title-info/translator/.*!) {
+        $aref->{$element} = "";
+        $ref = \$aref->{$element};
+    }
 
 }
 #
@@ -392,19 +392,19 @@ sub parse_start {
 #
 sub parse_char {
     my ($handle,$string) = @_;
-	$string =~ s/\s+/ /g;
-	if ($ref) {
-		$$ref .=$string;
-	}
+    $string =~ s/\s+/ /g;
+    if ($ref) {
+        $$ref .=$string;
+    }
 }
 #
 # Process end of element - remove last element from path and undefine
 # $ref
 #
 sub parse_end {
-	my ($handle,$element) = @_;
-	undef $ref;
-	$context =~s!/[^/]*$!!;
+    my ($handle,$element) = @_;
+    undef $ref;
+    $context =~s!/[^/]*$!!;
 }
 #
 # Subroutine reference for procedure to process parsed data, accumulated
@@ -428,8 +428,8 @@ sub process {
   $parser->parse($header);
   };
   if ($@) {
-  	print STDERR "$filename:$@\n";
-	return;
+    print STDERR "$filename:$@\n";
+    return;
   }
   $metainfo{filename} = decode($filenameencoding,$filename);
   $metainfo{type} = $type;
@@ -446,316 +446,316 @@ sub debug_output {
 #
 
 sub tabsep_output {
-	print $metainfo{'filename'},"\t",$metainfo{'type'},"\t",
-	join(", ",
-	  map($_->{'first-name'}." ".$_->{'middle-name'}." ".$_->{'last-name'},
-	  	@{$metainfo{'author'}})),"\t",
-	  $metainfo{'Title'},"\t",join(", ",@{$metainfo{genre}}),
-	  "\t",$metainfo{'date'},"\t",$metainfo{'lang'},"\t",$metainfo{'src-lang'},"\t",($metainfo{sequence}?join("\t",%{$metainfo{sequence}}):""),"\n";
+    print $metainfo{'filename'},"\t",$metainfo{'type'},"\t",
+    join(", ",
+      map($_->{'first-name'}." ".$_->{'middle-name'}." ".$_->{'last-name'},
+        @{$metainfo{'author'}})),"\t",
+      $metainfo{'Title'},"\t",join(", ",@{$metainfo{genre}}),
+      "\t",$metainfo{'date'},"\t",$metainfo{'lang'},"\t",$metainfo{'src-lang'},"\t",($metainfo{sequence}?join("\t",%{$metainfo{sequence}}):""),"\n";
 
 }
 #
 # Output xml element
 #
 sub simple_element {
-	my ($writer,$element,$content) = @_;
-	$writer->startTag($element);
-	$writer->characters($content);
-	$writer->endTag;
+    my ($writer,$element,$content) = @_;
+    $writer->startTag($element);
+    $writer->characters($content);
+    $writer->endTag;
 }
 our $xmlwriter;
 
 sub xml_output {
-	$xmlwriter->startTag("book", "href"=>$metainfo{'filename'},
-	 ($metainfo{'type'} ne "fb2"?("compression"=>$metainfo{'type'}):()));
-	simple_element($xmlwriter,"book-title",$metainfo{'Title'});
-	foreach my $person ("author","translator") {
-		foreach my $a (@{$metainfo{$person}}) {
-			$xmlwriter->startTag($person) ;
-			foreach my $name ("first-name","middle-name","last-name") {
-				if (exists $a->{$name}) {
-					simple_element($xmlwriter,$name,$a->{$name});
-				}
-			}
-			$xmlwriter->endTag();
-		}
-	}
-	simple_element($xmlwriter,"date",$metainfo{'date'});
-	simple_element($xmlwriter,"lang",$metainfo{'lang'});
-	simple_element($xmlwriter,"src-lang",$metainfo{'src-lang'});
-	foreach my $g (@{$metainfo{genre}}) {
-		simple_element($xmlwriter,"genre",$g);
-	}
-	if (defined $metainfo{sequence}) {
-		my ($seqname,$num) = %{$metainfo{sequence}};
-		$xmlwriter->emptyTag("sequence","name"=>$seqname,(defined
-		$num?("number"=>$num):()));
-	}
-	$xmlwriter->endTag();
+    $xmlwriter->startTag("book", "href"=>$metainfo{'filename'},
+     ($metainfo{'type'} ne "fb2"?("compression"=>$metainfo{'type'}):()));
+    simple_element($xmlwriter,"book-title",$metainfo{'Title'});
+    foreach my $person ("author","translator") {
+        foreach my $a (@{$metainfo{$person}}) {
+            $xmlwriter->startTag($person) ;
+            foreach my $name ("first-name","middle-name","last-name") {
+                if (exists $a->{$name}) {
+                    simple_element($xmlwriter,$name,$a->{$name});
+                }
+            }
+            $xmlwriter->endTag();
+        }
+    }
+    simple_element($xmlwriter,"date",$metainfo{'date'});
+    simple_element($xmlwriter,"lang",$metainfo{'lang'});
+    simple_element($xmlwriter,"src-lang",$metainfo{'src-lang'});
+    foreach my $g (@{$metainfo{genre}}) {
+        simple_element($xmlwriter,"genre",$g);
+    }
+    if (defined $metainfo{sequence}) {
+        my ($seqname,$num) = %{$metainfo{sequence}};
+        $xmlwriter->emptyTag("sequence","name"=>$seqname,(defined
+        $num?("number"=>$num):()));
+    }
+    $xmlwriter->endTag();
 }
 
 our %genres_transfer = ();
 sub read_genres {
-	my ($lang) = @_;
-	my ($genre,$title);
-	my $parser = XML::Parser->new(Handlers=> {
-		Start => sub {
-			my ($handle,$element,%attrs) = @_;
-			if ($element eq 'subgenre') {
-				$genre = $attrs{'value'};
-				$title = undef;
-			}
-			elsif ($element eq 'genre-descr') {
-				$genres_transfer{$genre} = $title = $attrs{'title'} if ($attrs{'lang'} eq $lang);
-			}
-			elsif ($element eq 'genre-alt') {
-				$genres_transfer{$attrs{'value'}} = $title;
-			}
-		}
-	});
-	$parser->parsefile('genres_transfer.xml');
+    my ($lang) = @_;
+    my ($genre,$title);
+    my $parser = XML::Parser->new(Handlers=> {
+        Start => sub {
+            my ($handle,$element,%attrs) = @_;
+            if ($element eq 'subgenre') {
+                $genre = $attrs{'value'};
+                $title = undef;
+            }
+            elsif ($element eq 'genre-descr') {
+                $genres_transfer{$genre} = $title = $attrs{'title'} if ($attrs{'lang'} eq $lang);
+            }
+            elsif ($element eq 'genre-alt') {
+                $genres_transfer{$attrs{'value'}} = $title;
+            }
+        }
+    });
+    $parser->parsefile('genres_transfer.xml');
 }
 
 sub conv_lang {
-	return code2language($_[0]) || $_[0];
+    return code2language($_[0]) || $_[0];
 }
 
 sub format_name1 {
-	my $s = $_->{'last-name'};
-	if (exists $_->{'first-name'}) {
-		$s .= ', '.$_->{'first-name'};
-		if (exists $_->{'middle-name'}) {
-			$s .= ' '.$_->{'middle-name'};
-		}
-	}
-	return $s;
+    my $s = $_->{'last-name'};
+    if (exists $_->{'first-name'}) {
+        $s .= ', '.$_->{'first-name'};
+        if (exists $_->{'middle-name'}) {
+            $s .= ' '.$_->{'middle-name'};
+        }
+    }
+    return $s;
 }
 sub tellico_output {
-	our %genres_transfer;
-	$xmlwriter->startTag('entry');
-	simple_element($xmlwriter,'title',$metainfo{'Title'});
-	foreach my $person ('author','translator') {
-		$xmlwriter->startTag(${person}.'s') ;
-		foreach (@{$metainfo{$person}}) {
-			simple_element($xmlwriter,$person,format_name1($_));
-		}
-		$xmlwriter->endTag();
-	}
-	simple_element($xmlwriter,'date',$metainfo{'date'});
-	simple_element($xmlwriter,'language',conv_lang($metainfo{'lang'}));
-	simple_element($xmlwriter,'orig_language',conv_lang($metainfo{'src-lang'}));
-	$xmlwriter->startTag('genres');
-	my @genres = @{$metainfo{'genre'}};
-	@genres = keys %{{map { $genres_transfer{$_} || "?$_" => ''} @genres}};
-	foreach my $g (@genres) {
-		simple_element($xmlwriter,'genre',$g);
-	}
-	$xmlwriter->endTag();
-	if (defined $metainfo{sequence}) {
-		my ($seqname,$num) = %{$metainfo{sequence}};
-		simple_element($xmlwriter,'series',$seqname);
-		if (defined $num) {
-			simple_element($xmlwriter,'series_num',$num);
-		}
-	}
-	simple_element($xmlwriter,'url',$metainfo{'filename'});
-	$xmlwriter->endTag();
+    our %genres_transfer;
+    $xmlwriter->startTag('entry');
+    simple_element($xmlwriter,'title',$metainfo{'Title'});
+    foreach my $person ('author','translator') {
+        $xmlwriter->startTag(${person}.'s') ;
+        foreach (@{$metainfo{$person}}) {
+            simple_element($xmlwriter,$person,format_name1($_));
+        }
+        $xmlwriter->endTag();
+    }
+    simple_element($xmlwriter,'date',$metainfo{'date'});
+    simple_element($xmlwriter,'language',conv_lang($metainfo{'lang'}));
+    simple_element($xmlwriter,'orig_language',conv_lang($metainfo{'src-lang'}));
+    $xmlwriter->startTag('genres');
+    my @genres = @{$metainfo{'genre'}};
+    @genres = keys %{{map { $genres_transfer{$_} || "?$_" => ''} @genres}};
+    foreach my $g (@genres) {
+        simple_element($xmlwriter,'genre',$g);
+    }
+    $xmlwriter->endTag();
+    if (defined $metainfo{sequence}) {
+        my ($seqname,$num) = %{$metainfo{sequence}};
+        simple_element($xmlwriter,'series',$seqname);
+        if (defined $num) {
+            simple_element($xmlwriter,'series_num',$num);
+        }
+    }
+    simple_element($xmlwriter,'url',$metainfo{'filename'});
+    $xmlwriter->endTag();
 }
 
 sub check_pattern {
-	my $specifier = shift;
-	if (index("AatTsnxlLdgf%",$specifier)==-1) {
-		die ("Invalid format specifier \%$specifier\n");
-	};
-	return "\%$specifier";
+    my $specifier = shift;
+    if (index("AatTsnxlLdgf%",$specifier)==-1) {
+        die ("Invalid format specifier \%$specifier\n");
+    };
+    return "\%$specifier";
 }
 
 sub interpret_pattern {
-	our %metainfo;
-	my $specifier = shift;
-	if ($specifier eq 'A') {
-		return join(", ",
-	  map($_->{'first-name'}." ".$_->{'middle-name'}." ".$_->{'last-name'},
-	  	@{$metainfo{'author'}}))
+    our %metainfo;
+    my $specifier = shift;
+    if ($specifier eq 'A') {
+        return join(", ",
+      map($_->{'first-name'}." ".$_->{'middle-name'}." ".$_->{'last-name'},
+        @{$metainfo{'author'}}))
 
-	} elsif ($specifier eq 'a') {
-		return join(", ",
-	  map($_->{'first-name'}." ".$_->{'last-name'},
-	  	@{$metainfo{'translator'}}))
-	} elsif ($specifier eq 't') {
-		return join(", ",
-	  map($_->{'first-name'}." ".$_->{'middle-name'}." ".$_->{'last-name'},
-	  	@{$metainfo{'translator'}}))
-	} elsif ($specifier eq 'T') {
-		return $metainfo{'Title'};
-	} elsif ($specifier eq 's') {
-		return join(" ",keys %{$metainfo{sequence}});
-	} elsif ($specifier eq 'n') {
-		return join(" ",values %{$metainfo{'sequence'}});
-	} elsif ($specifier eq 'l') {
-		return $metainfo{'lang'};
-	} elsif ($specifier eq 'L') {
-		return $metainfo{'src-lang'};
-	} elsif ($specifier eq 'd') {
-		return $metainfo{'date'};
-	} elsif ($specifier eq 'x') {
-		return '.fb2.zip' if ($metainfo{'type'} eq 'zip');
-		return '.fb2.gz' if ($metainfo{'type'} eq 'gzip');
-		return '.fb2';
-	} elsif ($specifier eq 'g') {
-		return join(',',@{$metainfo{'genre'}});
-	} elsif ($specifier eq 'f') {
-		return $metainfo{'filename'};
- 	} elsif ($specifier eq '%') {
-		return '%';
-	}
+    } elsif ($specifier eq 'a') {
+        return join(", ",
+      map($_->{'first-name'}." ".$_->{'last-name'},
+        @{$metainfo{'translator'}}))
+    } elsif ($specifier eq 't') {
+        return join(", ",
+      map($_->{'first-name'}." ".$_->{'middle-name'}." ".$_->{'last-name'},
+        @{$metainfo{'translator'}}))
+    } elsif ($specifier eq 'T') {
+        return $metainfo{'Title'};
+    } elsif ($specifier eq 's') {
+        return join(" ",keys %{$metainfo{sequence}});
+    } elsif ($specifier eq 'n') {
+        return join(" ",values %{$metainfo{'sequence'}});
+    } elsif ($specifier eq 'l') {
+        return $metainfo{'lang'};
+    } elsif ($specifier eq 'L') {
+        return $metainfo{'src-lang'};
+    } elsif ($specifier eq 'd') {
+        return $metainfo{'date'};
+    } elsif ($specifier eq 'x') {
+        return '.fb2.zip' if ($metainfo{'type'} eq 'zip');
+        return '.fb2.gz' if ($metainfo{'type'} eq 'gzip');
+        return '.fb2';
+    } elsif ($specifier eq 'g') {
+        return join(',',@{$metainfo{'genre'}});
+    } elsif ($specifier eq 'f') {
+        return $metainfo{'filename'};
+    } elsif ($specifier eq '%') {
+        return '%';
+    }
 }
 
 sub bs_escape {
   my $sym = shift;
   my %escapes = ('n'=>"\n",'r'=>"\r",'b'=>"\b",'a'=>"\a","\\"=>"\\");
   if (exists $escapes{$sym}) {
-  	return $escapes{$sym}
+    return $escapes{$sym}
   } else {
-  	return $sym;
+    return $sym;
   }
 }
 
 sub set_pattern {
-	my $pat = shift;
-	$pat =~ s/%(.)/check_pattern($1)/ge;
-	$pat =~ s/\\(.)/bs_escape($1)/ge;
-	our $pattern = $pat;
+    my $pat = shift;
+    $pat =~ s/%(.)/check_pattern($1)/ge;
+    $pat =~ s/\\(.)/bs_escape($1)/ge;
+    our $pattern = $pat;
 }
 
 sub format_string {
-	our $pattern;
-	my $str = $pattern;
-	$str =~s/%(.)/interpret_pattern($1)/ge;
-	return $str;
+    our $pattern;
+    my $str = $pattern;
+    $str =~s/%(.)/interpret_pattern($1)/ge;
+    return $str;
 }
 
 sub formatted_output {
-	print format_string();
+    print format_string();
 }
 sub do_list {
-	our $encoding;
-	getopts("tf:");
-	if ($opt_t) {
-		print
-		join("\t","filename","compr","author(s)","title","genre","date",
-		"lang","src-lang","sequence","num"),"\n";
-		scan_tree(\&tabsep_output)
-	} elsif ($opt_f) {
-		set_pattern($opt_f);
-		scan_tree(\&formatted_output);
-	} else {
-		our $xmlwriter = new XML::Writer(OUTPUT=> \*STDOUT,DATA_MODE=>1,
-		DATA_INDENT=>2);
-		$xmlwriter->xmlDecl($encoding);
-		$xmlwriter->startTag("Library");
-		scan_tree( \&xml_output);
-		$xmlwriter->endTag();
-		$xmlwriter->end();
-	}
+    our $encoding;
+    getopts("tf:");
+    if ($opt_t) {
+        print
+        join("\t","filename","compr","author(s)","title","genre","date",
+        "lang","src-lang","sequence","num"),"\n";
+        scan_tree(\&tabsep_output)
+    } elsif ($opt_f) {
+        set_pattern($opt_f);
+        scan_tree(\&formatted_output);
+    } else {
+        our $xmlwriter = new XML::Writer(OUTPUT=> \*STDOUT,DATA_MODE=>1,
+        DATA_INDENT=>2);
+        $xmlwriter->xmlDecl($encoding);
+        $xmlwriter->startTag("Library");
+        scan_tree( \&xml_output);
+        $xmlwriter->endTag();
+        $xmlwriter->end();
+    }
 }
 
 sub do_export {
-	our $format = shift @ARGV;
-	if ($format eq 'tellico') {
-		do_export_tellico();
-	} elsif ($format eq 'onix') {
-		do_export_onix();
-	} else {
-		die ("Invalid format $format\n");
-	}
+    our $format = shift @ARGV;
+    if ($format eq 'tellico') {
+        do_export_tellico();
+    } elsif ($format eq 'onix') {
+        do_export_onix();
+    } else {
+        die ("Invalid format $format\n");
+    }
 }
 
 sub do_export_tellico {
-	read_genres('en');
-	our $encoding;
-	our $xmlwriter = new XML::Writer(OUTPUT=> \*STDOUT,DATA_MODE=>1, DATA_INDENT=>2);
-	$xmlwriter->xmlDecl($encoding);
-	$xmlwriter->startTag('tellico', 'xmlns'=>'http://periapsis.org/tellico/', 'syntaxVersion'=>'9');
-	$xmlwriter->startTag('collection', 'title'=>'My Fiction Books', 'type'=>'2');
-	$xmlwriter->startTag('fields');
-	$xmlwriter->emptyTag('field','flags'=>'8', 'title'=>'Title', 'category'=>'General', 'format'=>'1', 'type'=>'1', 'name'=>'title');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Subtitle', 'category'=>'General', 'format'=>'1', 'type'=>'1', 'name'=>'subtitle');
-	$xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Author', 'category'=>'General', 'format'=>'2', 'type'=>'1', 'name'=>'author');
-	$xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Translator', 'category'=>'General', 'format'=>'2', 'type'=>'1', 'name'=>'translator');
-	$xmlwriter->emptyTag('field','flags'=>'2', 'title'=>'Binding', 'category'=>'General', 'allowed'=>'Hardback;Paperback;Trade Paperback;E-Book;Magazine;Journal', 'format'=>'4', 'type'=>'3', 'name'=>'binding');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Purchase Date', 'category'=>'General', 'format'=>'3', 'type'=>'1', 'name'=>'pur_date');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Purchase Price', 'category'=>'General', 'format'=>'4', 'type'=>'1', 'name'=>'pur_price');
-	$xmlwriter->emptyTag('field','flags'=>'6', 'title'=>'Publisher', 'category'=>'Publishing', 'format'=>'0', 'type'=>'1', 'name'=>'publisher');
-	$xmlwriter->emptyTag('field','flags'=>'4', 'title'=>'Edition', 'category'=>'Publishing', 'format'=>'0', 'type'=>'1', 'name'=>'edition');
-	$xmlwriter->emptyTag('field','flags'=>'3', 'title'=>'Copyright Year', 'category'=>'Publishing', 'format'=>'4', 'type'=>'6', 'name'=>'cr_year');
-	$xmlwriter->emptyTag('field','flags'=>'2', 'title'=>'Publication Year', 'category'=>'Publishing', 'format'=>'4', 'type'=>'6', 'name'=>'pub_year');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'ISBN#', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'isbn', 'description'=>'International Standard Book Number');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'LCCN#', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'lccn', 'description'=>'Library of Congress Control Number');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Pages', 'category'=>'Publishing', 'format'=>'4', 'type'=>'6', 'name'=>'pages');
-	$xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Language', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'language');
-	$xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Original Language', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'orig_language');
-	$xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Genre', 'category'=>'Classification', 'format'=>'4', 'type'=>'1', 'name'=>'genre');
-	$xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Keywords', 'category'=>'Classification', 'format'=>'4', 'type'=>'1', 'name'=>'keyword');
-	$xmlwriter->emptyTag('field','flags'=>'6', 'title'=>'Series', 'category'=>'Classification', 'format'=>'4', 'type'=>'1', 'name'=>'series');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Series Number', 'category'=>'Classification', 'format'=>'4', 'type'=>'6', 'name'=>'series_num');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Condition', 'category'=>'Classification', 'allowed'=>'New;Used', 'format'=>'4', 'type'=>'3', 'name'=>'condition');
-	$xmlwriter->emptyTag('field','flags'=>'1', 'title'=>'URL', 'category'=>'Personal', 'format'=>'4', 'type'=>'7', 'name'=>'url');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Signed', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'signed');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Read', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'read');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Gift', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'gift');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Loaned', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'loaned');
-	$xmlwriter->startTag('field','flags'=>'2', 'title'=>'Rating', 'category'=>'Personal', 'format'=>'4', 'type'=>'14', 'name'=>'rating');
-	$xmlwriter->startTag('prop', 'name'=>'maximum'); $xmlwriter->characters('5'); $xmlwriter->endTag();
-	$xmlwriter->startTag('prop', 'name'=>'minimum'); $xmlwriter->characters('1'); $xmlwriter->endTag();
-	$xmlwriter->endTag();
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Front Cover', 'category'=>'Front Cover', 'format'=>'4', 'type'=>'10', 'name'=>'cover');
-	$xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Comments', 'category'=>'Comments', 'format'=>'4', 'type'=>'2', 'name'=>'comments');
-	$xmlwriter->endTag();
-	scan_tree( \&tellico_output);
-	$xmlwriter->endTag();
-	$xmlwriter->endTag();
-	$xmlwriter->end();
+    read_genres('en');
+    our $encoding;
+    our $xmlwriter = new XML::Writer(OUTPUT=> \*STDOUT,DATA_MODE=>1, DATA_INDENT=>2);
+    $xmlwriter->xmlDecl($encoding);
+    $xmlwriter->startTag('tellico', 'xmlns'=>'http://periapsis.org/tellico/', 'syntaxVersion'=>'9');
+    $xmlwriter->startTag('collection', 'title'=>'My Fiction Books', 'type'=>'2');
+    $xmlwriter->startTag('fields');
+    $xmlwriter->emptyTag('field','flags'=>'8', 'title'=>'Title', 'category'=>'General', 'format'=>'1', 'type'=>'1', 'name'=>'title');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Subtitle', 'category'=>'General', 'format'=>'1', 'type'=>'1', 'name'=>'subtitle');
+    $xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Author', 'category'=>'General', 'format'=>'2', 'type'=>'1', 'name'=>'author');
+    $xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Translator', 'category'=>'General', 'format'=>'2', 'type'=>'1', 'name'=>'translator');
+    $xmlwriter->emptyTag('field','flags'=>'2', 'title'=>'Binding', 'category'=>'General', 'allowed'=>'Hardback;Paperback;Trade Paperback;E-Book;Magazine;Journal', 'format'=>'4', 'type'=>'3', 'name'=>'binding');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Purchase Date', 'category'=>'General', 'format'=>'3', 'type'=>'1', 'name'=>'pur_date');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Purchase Price', 'category'=>'General', 'format'=>'4', 'type'=>'1', 'name'=>'pur_price');
+    $xmlwriter->emptyTag('field','flags'=>'6', 'title'=>'Publisher', 'category'=>'Publishing', 'format'=>'0', 'type'=>'1', 'name'=>'publisher');
+    $xmlwriter->emptyTag('field','flags'=>'4', 'title'=>'Edition', 'category'=>'Publishing', 'format'=>'0', 'type'=>'1', 'name'=>'edition');
+    $xmlwriter->emptyTag('field','flags'=>'3', 'title'=>'Copyright Year', 'category'=>'Publishing', 'format'=>'4', 'type'=>'6', 'name'=>'cr_year');
+    $xmlwriter->emptyTag('field','flags'=>'2', 'title'=>'Publication Year', 'category'=>'Publishing', 'format'=>'4', 'type'=>'6', 'name'=>'pub_year');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'ISBN#', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'isbn', 'description'=>'International Standard Book Number');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'LCCN#', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'lccn', 'description'=>'Library of Congress Control Number');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Pages', 'category'=>'Publishing', 'format'=>'4', 'type'=>'6', 'name'=>'pages');
+    $xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Language', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'language');
+    $xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Original Language', 'category'=>'Publishing', 'format'=>'4', 'type'=>'1', 'name'=>'orig_language');
+    $xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Genre', 'category'=>'Classification', 'format'=>'4', 'type'=>'1', 'name'=>'genre');
+    $xmlwriter->emptyTag('field','flags'=>'7', 'title'=>'Keywords', 'category'=>'Classification', 'format'=>'4', 'type'=>'1', 'name'=>'keyword');
+    $xmlwriter->emptyTag('field','flags'=>'6', 'title'=>'Series', 'category'=>'Classification', 'format'=>'4', 'type'=>'1', 'name'=>'series');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Series Number', 'category'=>'Classification', 'format'=>'4', 'type'=>'6', 'name'=>'series_num');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Condition', 'category'=>'Classification', 'allowed'=>'New;Used', 'format'=>'4', 'type'=>'3', 'name'=>'condition');
+    $xmlwriter->emptyTag('field','flags'=>'1', 'title'=>'URL', 'category'=>'Personal', 'format'=>'4', 'type'=>'7', 'name'=>'url');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Signed', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'signed');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Read', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'read');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Gift', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'gift');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Loaned', 'category'=>'Personal', 'format'=>'4', 'type'=>'4', 'name'=>'loaned');
+    $xmlwriter->startTag('field','flags'=>'2', 'title'=>'Rating', 'category'=>'Personal', 'format'=>'4', 'type'=>'14', 'name'=>'rating');
+    $xmlwriter->startTag('prop', 'name'=>'maximum'); $xmlwriter->characters('5'); $xmlwriter->endTag();
+    $xmlwriter->startTag('prop', 'name'=>'minimum'); $xmlwriter->characters('1'); $xmlwriter->endTag();
+    $xmlwriter->endTag();
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Front Cover', 'category'=>'Front Cover', 'format'=>'4', 'type'=>'10', 'name'=>'cover');
+    $xmlwriter->emptyTag('field','flags'=>'0', 'title'=>'Comments', 'category'=>'Comments', 'format'=>'4', 'type'=>'2', 'name'=>'comments');
+    $xmlwriter->endTag();
+    scan_tree( \&tellico_output);
+    $xmlwriter->endTag();
+    $xmlwriter->endTag();
+    $xmlwriter->end();
 }
 
 sub onix_output {
-	our $recordReference;
-	$xmlwriter->startTag('Product');
-	simple_element($xmlwriter,'RecordReference',$recordReference++);
-	simple_element($xmlwriter,'NotificationType','03');
-# 	simple_element($xmlwriter,'RecordSourceName','fb2meta');
-	simple_element($xmlwriter,'ISBN',''); # TODO
-	simple_element($xmlwriter,'ProductForm','DG'); # Electronic book text
-	simple_element($xmlwriter,'DistinctiveTitle',$metainfo{'Title'});
-	foreach (@{$metainfo{'author'}}) {
-		$xmlwriter->startTag('Contributor');
-		simple_element($xmlwriter,'ContributorRole','A01'); # By (author)
-		simple_element($xmlwriter,'PersonName',format_name1($_));
-		$xmlwriter->endTag();
-	}
-	foreach (@{$metainfo{'translator'}}) {
-		$xmlwriter->startTag('Contributor');
-		simple_element($xmlwriter,'ContributorRole','B06'); #Translated by
-		simple_element($xmlwriter,'PersonName',format_name1($_));
-		$xmlwriter->endTag();
-	}
-	simple_element($xmlwriter,'PublisherName',''); # TODO
-	$xmlwriter->endTag();
+    our $recordReference;
+    $xmlwriter->startTag('Product');
+    simple_element($xmlwriter,'RecordReference',$recordReference++);
+    simple_element($xmlwriter,'NotificationType','03');
+#   simple_element($xmlwriter,'RecordSourceName','fb2meta');
+    simple_element($xmlwriter,'ISBN',''); # TODO
+    simple_element($xmlwriter,'ProductForm','DG'); # Electronic book text
+    simple_element($xmlwriter,'DistinctiveTitle',$metainfo{'Title'});
+    foreach (@{$metainfo{'author'}}) {
+        $xmlwriter->startTag('Contributor');
+        simple_element($xmlwriter,'ContributorRole','A01'); # By (author)
+        simple_element($xmlwriter,'PersonName',format_name1($_));
+        $xmlwriter->endTag();
+    }
+    foreach (@{$metainfo{'translator'}}) {
+        $xmlwriter->startTag('Contributor');
+        simple_element($xmlwriter,'ContributorRole','B06'); #Translated by
+        simple_element($xmlwriter,'PersonName',format_name1($_));
+        $xmlwriter->endTag();
+    }
+    simple_element($xmlwriter,'PublisherName',''); # TODO
+    $xmlwriter->endTag();
 }
 
 sub do_export_onix {
-	our $recordReference = 0;
-	our $encoding;
-	our $xmlwriter = new XML::Writer(OUTPUT=> \*STDOUT,DATA_MODE=>1, DATA_INDENT=>2);
-	$xmlwriter->xmlDecl($encoding);
-	$xmlwriter->startTag('ONIXMessage');
-	$xmlwriter->startTag('Header');
-	simple_element($xmlwriter,'SentDate',''); # TODO
-# 	simple_element($xmlwriter,'MessageNote','');
-	$xmlwriter->endTag();
-	scan_tree( \&onix_output);
-	$xmlwriter->endTag();
-	$xmlwriter->end();
+    our $recordReference = 0;
+    our $encoding;
+    our $xmlwriter = new XML::Writer(OUTPUT=> \*STDOUT,DATA_MODE=>1, DATA_INDENT=>2);
+    $xmlwriter->xmlDecl($encoding);
+    $xmlwriter->startTag('ONIXMessage');
+    $xmlwriter->startTag('Header');
+    simple_element($xmlwriter,'SentDate',''); # TODO
+#   simple_element($xmlwriter,'MessageNote','');
+    $xmlwriter->endTag();
+    scan_tree( \&onix_output);
+    $xmlwriter->endTag();
+    $xmlwriter->end();
 }
 
 #
@@ -764,66 +764,66 @@ sub do_export_onix {
 our %attrlist;
 our $attribute;
 sub attrlist_output {
-	our $attribute;
-	if ($attribute eq 'author' || $attribute eq 'translator') {
-		foreach my $a (@{$metainfo{$attribute}}) {
-			$attrlist{join("|",$a->{'last-name'},$a->{'first-name'},$a->{'middle-name'})}++;
-		}
-	} elsif ($attribute eq 'book-title' || $attribute eq 'title') {
-		$attrlist{$metainfo{'Title'}}++;
-	} elsif ($attribute eq 'genre') {
-		foreach my $a (@{$metainfo{$attribute}}) {
-			$attrlist{$a}++;
-		}
-	} elsif ($attribute eq 'sequence') {
-		foreach my $a (keys %{$metainfo{'sequence'}}) {
-			$attrlist{$a}++;
-		}
-	} elsif ($attribute eq 'sequence.num') {
-		foreach my $a (values %{$metainfo{'sequence'}}) {
-			$attrlist{$a} ++;
-		}
-	} elsif ($attribute =~ /(\w+)\.(\w+)/) {
-		foreach my $a (@{$metainfo{$1}}) {
-			$attrlist{$a->{$2}} ++;
-		}
-	} else {
-		$attrlist{$metainfo{$attribute}}++;
-	}
-	progress();
+    our $attribute;
+    if ($attribute eq 'author' || $attribute eq 'translator') {
+        foreach my $a (@{$metainfo{$attribute}}) {
+            $attrlist{join("|",$a->{'last-name'},$a->{'first-name'},$a->{'middle-name'})}++;
+        }
+    } elsif ($attribute eq 'book-title' || $attribute eq 'title') {
+        $attrlist{$metainfo{'Title'}}++;
+    } elsif ($attribute eq 'genre') {
+        foreach my $a (@{$metainfo{$attribute}}) {
+            $attrlist{$a}++;
+        }
+    } elsif ($attribute eq 'sequence') {
+        foreach my $a (keys %{$metainfo{'sequence'}}) {
+            $attrlist{$a}++;
+        }
+    } elsif ($attribute eq 'sequence.num') {
+        foreach my $a (values %{$metainfo{'sequence'}}) {
+            $attrlist{$a} ++;
+        }
+    } elsif ($attribute =~ /(\w+)\.(\w+)/) {
+        foreach my $a (@{$metainfo{$1}}) {
+            $attrlist{$a->{$2}} ++;
+        }
+    } else {
+        $attrlist{$metainfo{$attribute}}++;
+    }
+    progress();
 }
 
 sub fix_format {
-	our $attribute;
-	my $key = shift;
-	my ($l,$f,$m);
-	if ($attribute eq 'author' || $attribute eq 'translator') {
-		($l,$f,$m) = split(/\|/,$key);
-		return "$f $m $l";
-	} else {
-		return $key;
-	}
+    our $attribute;
+    my $key = shift;
+    my ($l,$f,$m);
+    if ($attribute eq 'author' || $attribute eq 'translator') {
+        ($l,$f,$m) = split(/\|/,$key);
+        return "$f $m $l";
+    } else {
+        return $key;
+    }
 }
 
 sub do_uniq {
-	getopts("c");
-	select STDERR;
-	$|=1;
-	select STDOUT;
-	our $attribute = shift @ARGV;
-	scan_tree(\&attrlist_output);
-	print STDERR "\r"," "x78,"\r";
-	if ($opt_c) {
-		foreach my $key (sort {$attrlist{$a} <=> $attrlist{$b}|| $a cmp $b}
-		   keys(%attrlist)) {
+    getopts("c");
+    select STDERR;
+    $|=1;
+    select STDOUT;
+    our $attribute = shift @ARGV;
+    scan_tree(\&attrlist_output);
+    print STDERR "\r"," "x78,"\r";
+    if ($opt_c) {
+        foreach my $key (sort {$attrlist{$a} <=> $attrlist{$b}|| $a cmp $b}
+           keys(%attrlist)) {
 
-		   printf "%5d %s\n",$attrlist{$key},fix_format($key);
-		}
-	} else {
-		foreach my $key (sort keys(%attrlist)) {
-			print fix_format($key),"\n";
-		}
-	}
+           printf "%5d %s\n",$attrlist{$key},fix_format($key);
+        }
+    } else {
+        foreach my $key (sort keys(%attrlist)) {
+            print fix_format($key),"\n";
+        }
+    }
 }
 
 
@@ -841,8 +841,8 @@ sub rename_file {
 }
 
 sub do_rename {
-	getopts("z");
-	our $pattern = shift @ARGV;
+    getopts("z");
+    our $pattern = shift @ARGV;
     if($opt_z) {
         print "Option -z is not implemented yet!\n";
         exit 1;
@@ -862,90 +862,90 @@ sub format_rename {
 # Checks compression type, uncompresses file and cuts description tag.
 #
 sub check_file {
-	return unless -f $_;
-	my ($f,$magic);
-	open $f,"<",$_;
-	binmode $f,":bytes";
-	read $f,$magic,3;
-	my ($data,$type,$i);
-	if ($magic eq "\x1f\x8b\x08") {
-		seek $f,0,0;
-		my $gz = gzopen($f,"r");
-		$gz->gzread($data);
-		return unless (substr($data,0,5) eq '<?xml');
-		return unless (index($data,"<FictionBook")!=-1);
-		while (($i = index($data,"</description>"))==-1) {
-			my $d2;
-			return if $gz->gzread($d2)<=0;
-			$data .= $d2;
-		}
-		close $f;
-		$type = "gzip"
-	} elsif ($magic eq "PK\03") {
-		close $f;
-		my $zip = new Archive::Zip($_);
-		if (!$zip) {
-			print STDERR "\r$_ is broken ZIP archive\n";
-			return;
-		}
-		my ($member) = $zip->members();
-		$member->desiredCompressionMethod(COMPRESSION_STORED);
-		$member->rewindData();
-		my ($bytes,$status) = eval {$member->readChunk(4096);};
+    return unless -f $_;
+    my ($f,$magic);
+    open $f,"<",$_;
+    binmode $f,":bytes";
+    read $f,$magic,3;
+    my ($data,$type,$i);
+    if ($magic eq "\x1f\x8b\x08") {
+        seek $f,0,0;
+        my $gz = gzopen($f,"r");
+        $gz->gzread($data);
+        return unless (substr($data,0,5) eq '<?xml');
+        return unless (index($data,"<FictionBook")!=-1);
+        while (($i = index($data,"</description>"))==-1) {
+            my $d2;
+            return if $gz->gzread($d2)<=0;
+            $data .= $d2;
+        }
+        close $f;
+        $type = "gzip"
+    } elsif ($magic eq "PK\03") {
+        close $f;
+        my $zip = new Archive::Zip($_);
+        if (!$zip) {
+            print STDERR "\r$_ is broken ZIP archive\n";
+            return;
+        }
+        my ($member) = $zip->members();
+        $member->desiredCompressionMethod(COMPRESSION_STORED);
+        $member->rewindData();
+        my ($bytes,$status) = eval {$member->readChunk(4096);};
         unless (defined($bytes) && ($status == AZ_OK || $status == AZ_STREAM_END)) {
-			print STDERR "\r$_ is broken: $@\n";
-			$member->endRead();return;
-		}
-		$data = $$bytes;
-		unless (substr($data,0,5) eq '<?xml' &&
-		   index($data,"<FictionBook")!=-1) {
-		   $member->endRead();
-		   return;
-		}
-		while (($i = index ($data,"</description>"))==-1) {
-			if ($status == AZ_STREAM_END) {
-				$member->endRead();
-				return;
-			}
-			($bytes,$status) = $member->readChunk(4096);
-			if ($status != AZ_OK && $status != AZ_STREAM_END) {
-				$member->endRead(); return;
-			}
-			$data .= $$bytes;
-		}
-		$member->endRead();
-		$type = "zip";
-	} elsif ($magic eq "<?x") {
-		$type = "fb2";
-		$data = $magic;
-		while ( ($i = index($data,"</description>"))==-1)  {
-			return unless read($f,$data,4096,length($data));
-		}
-		close $f;
-	} else {
-		return;
-	}
-	if ($i) {
-	 process($File::Find::name,$type,substr($data,0,$i+length("</description>"))."</FictionBook>");
-	}
-#	return unless $head = $data =~m!^.*</document-info>!;
-#	print "$_ ($type):\n$head\n";
+            print STDERR "\r$_ is broken: $@\n";
+            $member->endRead();return;
+        }
+        $data = $$bytes;
+        unless (substr($data,0,5) eq '<?xml' &&
+           index($data,"<FictionBook")!=-1) {
+           $member->endRead();
+           return;
+        }
+        while (($i = index ($data,"</description>"))==-1) {
+            if ($status == AZ_STREAM_END) {
+                $member->endRead();
+                return;
+            }
+            ($bytes,$status) = $member->readChunk(4096);
+            if ($status != AZ_OK && $status != AZ_STREAM_END) {
+                $member->endRead(); return;
+            }
+            $data .= $$bytes;
+        }
+        $member->endRead();
+        $type = "zip";
+    } elsif ($magic eq "<?x") {
+        $type = "fb2";
+        $data = $magic;
+        while ( ($i = index($data,"</description>"))==-1)  {
+            return unless read($f,$data,4096,length($data));
+        }
+        close $f;
+    } else {
+        return;
+    }
+    if ($i) {
+     process($File::Find::name,$type,substr($data,0,$i+length("</description>"))."</FictionBook>");
+    }
+#   return unless $head = $data =~m!^.*</document-info>!;
+#   print "$_ ($type):\n$head\n";
 }
 sub progress {
-	our $count;
-	printf STDERR "\r%6d files processed",++$count;
+    our $count;
+    printf STDERR "\r%6d files processed",++$count;
 }
 #
 # Scans tree of files using specified output procedure
 #
 sub scan_tree {
-	our $output = shift;
-	if (!@ARGV) {
-		unshift @ARGV,".";
-	}
-	for my $dir (@ARGV) {
-		find({no_chdir =>1, wanted=>\&check_file},$dir);
-	}
+    our $output = shift;
+    if (!@ARGV) {
+        unshift @ARGV,".";
+    }
+    for my $dir (@ARGV) {
+        find({no_chdir =>1, wanted=>\&check_file},$dir);
+    }
 }
 
 
@@ -978,12 +978,12 @@ our $filenameencoding = $ENV{G_FILENAME_ENCODING}||$encoding;
 $output = \&tabsep_output;
 
 if (!@ARGV) {
-	HELP_MESSAGE();
+    HELP_MESSAGE();
 } else {
-	my $command = shift @ARGV;
-	if (!exists $cmds{$command}) {
-		print STDERR "Unknown command $command\n";
-		HELP_MESSAGE();
-	}
-	$cmds{$command}();
+    my $command = shift @ARGV;
+    if (!exists $cmds{$command}) {
+        print STDERR "Unknown command $command\n";
+        HELP_MESSAGE();
+    }
+    $cmds{$command}();
 }

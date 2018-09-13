@@ -259,7 +259,7 @@ sub CleanupFB2{
                 if ($LangFixes{$XText}){$XText=$LangFixes{$XText};print "Lang changed to: $XText\n"}
             }
             $BookLang.=$XText if $InLang;
-            $XMLBody.=xmlescapeLite($XText) if ($InHead or $Elems[0]=~/\A(v|p|subtitle|td|text-author|a|style|strong|emphasis|binary)\Z/);
+            $XMLBody.=xmlescapeLite($XText) if ($InHead or $Elems[0]=~/\A(v|p|subtitle|td|text-author|cite|a|style|strong|emphasis|binary)\Z/);
       },
         End => sub {
 #           if ($_[1] eq 'description'){
@@ -317,14 +317,23 @@ sub CleanupFB2{
     $XMLBody=~s/[${u{mdash}}|${u{ndash}}](\s)/${u{mdash}}$1/g;
     print "step  8\n";
     $XMLBody=~s/<\/p>/<\/p>\n/g;
-    if ($BookLang eq 'ru'){
-        print "step  9: Replacing \" with << and >>  (for Russian only)\n";
+    $XMLBody=~s/<p>— \;/<p>— /g;
+    $XMLBody=~s/ <\/first/<\/first/g;
+    $XMLBody=~s/ <\/middle/<\/middle/g;
+    $XMLBody=~s/ <\/last/<\/last/g;
+    $XMLBody=~s/name> /name>/g;
+    $XMLBody=~s/title> /title>/g;
+    $XMLBody=~s/ <\/title>/<\/title>/g;
+    $XMLBody=~s/ <\/book/<\/book/g;
+    print "step  9\n";
+    if (($BookLang eq 'ru') || ($BookLang eq 'ruru')){
+        print "step ru1: Replacing \" with << and >>  (for Russian only)\n";
         while ($XMLBody=~s/>([^>]*?([\(\s"]))?"([^\"<]+?)([^\s"\(<])"/>$1${u{laquo}}$3$4${u{raquo}}/g){}
-        print "step 10: Replacing << and >> than are inside another << and >> with ,, and '' (for Russian only)\n";
+        print "step ru2: Replacing << and >> than are inside another << and >> with ,, and '' (for Russian only)\n";
         while ($XMLBody=~s/>([^>]*?)${u{laquo}}([^${u{raquo}}<]*?)${u{laquo}}([^${u{raquo}}<]*?)${u{raquo}}/>$1${u{laquo}}$2${u{bdquo}}$3${u{ldquo}}/g){}; 
-        print "step 11\n";
+        print "step ru3\n";
       $XMLBody=~s/([\.,!\?;]) ${u{mdash}}/$1${u{nbsp}}${u{mdash}}/g;
-        print "step 12\n";
+        print "step ru4\n";
     }
 
 

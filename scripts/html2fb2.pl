@@ -99,16 +99,16 @@ if ($@) {
 my $css =  CSS->new();
 
 # global options
-my $minempty=1;	    # minimum number of empty paragraphs that
-		    # produces an <empty-line/>
-my $minfont=0;	    # minimum <font> size to be interpreted as a section
+my $minempty=1;     # minimum number of empty paragraphs that
+                    # produces an <empty-line/>
+my $minfont=0;      # minimum <font> size to be interpreted as a section
 my $ST="strong";    # strong tag
 my $EM="emphasis";  # emphasis tag
 my $print_toc=0;    # print table of contents in the end
-my $minstyle=0;	    # minimum font-size style to be used as a section
+my $minstyle=0;     # minimum font-size style to be used as a section
 my $maxstyle=10000; # maximum ....
-my $Encoding; 	    # encoding
-my $Title;	    # title
+my $Encoding;       # encoding
+my $Title;          # title
 my $Author;
 my $report_styles;  # styles
 my %sect_styles;    # styles to use as sections
@@ -189,14 +189,14 @@ my $textbuf='';  # current paragraph contents
 my $realtext=0;  # 1 if there is any real text in textbuf
 my $space='';    # current trailing space
 my $lastempty=0; # last paragraph was <emptyline>
-my $strong=0;	 # <b> enabled/disabled in source
+my $strong=0;    # <b> enabled/disabled in source
 my $emphasis=0;  # <i> enabled/disabled in source
 my $curstate=0;  # current state of <b> and <i> in XML output
-my @elist;	 # list of all paragraphs/headers
+my @elist;       # list of all paragraphs/headers
 my $body=0;
 my %footnotes;
 my $paraid;
-my $poem=0;	 # we are parsing a poem
+my $poem=0;      # we are parsing a poem
 my $applevel=0;
 
 sub cleanstate {
@@ -309,7 +309,7 @@ sub moretext {
     my $newstate=0;
     $newstate|=1 if $strong;
     $newstate|=2 if $emphasis;
-    
+
     if ($curstate>$newstate) # if we were in some <i> or <b> tag, now out of it but not cloed it yet in $textbuf
     { 
       $space = $previous_space;
@@ -319,7 +319,7 @@ sub moretext {
       $space='';
     }
   }
-  
+
   my $msp='';
   $msp=' ' if $txt =~ /\s$/;
   $txt =~ s/^ //;
@@ -375,8 +375,8 @@ sub i_open
   $textbuf.=$space; # commition buffered space before opening a tag
   $space='';
   checkhl();
-  
 }
+
 sub i_close
 {
   --$emphasis;
@@ -476,27 +476,27 @@ sub element {
     } elsif ($t eq "p") {
       my $class=$elem->attr('class');
       if ($class) {
-	if ($sect_styles{lc($class)}) { # MS Office stuff
-	  add_section($elem->as_text,$sect_styles{lc($class)});
-	  return;
-	} elsif ($class eq "MsoFootnoteText" || $class eq "note") {
-	  # skip it here
-	  return;
-	} elsif ($class eq "lyrics" && !$poem) {
-	  pbreak();
-	  $poem=1;
-	  element($_) for $elem->content_list;
-	  pbreak();
-	  $poem=0;
-	  return;
-	} elsif ($class eq "intro") {
-	  pbreak();
-	  i_open();
-	  element($_) for $elem->content_list;
-	  i_close();
-	  pbreak();
-	  return;
-	}
+        if ($sect_styles{lc($class)}) { # MS Office stuff
+          add_section($elem->as_text,$sect_styles{lc($class)});
+          return;
+        } elsif ($class eq "MsoFootnoteText" || $class eq "note") {
+          # skip it here
+          return;
+        } elsif ($class eq "lyrics" && !$poem) {
+          pbreak();
+          $poem=1;
+          element($_) for $elem->content_list;
+          pbreak();
+          $poem=0;
+          return;
+        } elsif ($class eq "intro") {
+          pbreak();
+          i_open();
+          element($_) for $elem->content_list;
+          i_close();
+          pbreak();
+          return;
+        }
       }
       pbreak(1); # start of p doesnt add an empty line, but it stops an unclosed paragraph
       my %styles=get_styles($elem);
@@ -518,17 +518,17 @@ sub element {
       if ($minstyle)
       {
         if ($styles{'font-size'} &&
-	    $styles{'font-size'} =~ /^(\d+(?:\.\d+)?)(?:pt)?$/ &&
-	    $1>=$minstyle && $1<=$maxstyle)
+            $styles{'font-size'} =~ /^(\d+(?:\.\d+)?)(?:pt)?$/ &&
+            $1>=$minstyle && $1<=$maxstyle)
           {
-	  my $depth=36-$1;
-	  $depth=1 if $depth<1;
-	  $depth=20 if $depth>20;
-	  add_section($elem->as_text,$depth);
-	  }
+          my $depth=36-$1;
+          $depth=1 if $depth<1;
+          $depth=20 if $depth>20;
+          add_section($elem->as_text,$depth);
+          }
       return;
       }
-      
+
       i_open() if ($styles{'font-style'} && $styles{'font-style'} eq 'italic');
       b_open() if ($styles{'font-weight'} && $styles{'font-weight'} eq 'bold');
 
@@ -539,7 +539,7 @@ sub element {
         $emphasis = 0;
         checkhl();
       }
-      
+
       my $stored_strong;
       if ($styles{'font-weight'} && $styles{'font-weight'} eq 'normal')
       {
@@ -547,7 +547,7 @@ sub element {
         $strong = 0;
         checkhl();
       }
-      
+
       element($_) for $elem->content_list;
       if ($styles{'font-style'} && $styles{'font-style'} eq 'normal')
       {
@@ -557,18 +557,18 @@ sub element {
       {
          $strong = $stored_strong;
       }
-      
+
       b_close() if ($styles{'font-weight'} && $styles{'font-weight'} eq 'bold');
       i_close() if ($styles{'font-style'} && $styles{'font-style'} eq 'italic');
       return;
     } elsif ($minfont && $t eq "font") {
       my $size=$elem->attr('size');
       if ($size && $size>=$minfont) {
-	my $depth=$minfont+4-$size;
-	$depth=1 if $depth<1;
-	$depth=4 if $depth>4;
-	add_section($elem->as_text,$depth*3);
-	return;
+        my $depth=$minfont+4-$size;
+        $depth=1 if $depth<1;
+        $depth=4 if $depth>4;
+        add_section($elem->as_text,$depth*3);
+        return;
       }
     } elsif ($t eq "script" || $t eq "style") {
       return;
@@ -590,22 +590,22 @@ sub element {
       return;
    } elsif ($t eq 'img') {
      my $src = $elem->attr('src');
-	 add_image( $src );
-	 return;
+         add_image( $src );
+         return;
     } elsif ($t eq "a") {
       my $href=$elem->attr('href');
       my $name=$elem->attr('name');
       if ($name && $footnotes{$name}) {
-	$paraid=$name;
+        $paraid=$name;
       }
       if ($href && $href =~ /^#/) { # hyperlink
-	$href=substr($href,1);
-	if ($footnotes{$href}) {
-	  moretext("<a type=\"note\" xlink:href=\"#L$href\">",1);
-	  element($_) for $elem->content_list;
-	  moretext("</a>",1);
-	  return;
-	}
+        $href=substr($href,1);
+        if ($footnotes{$href}) {
+          moretext("<a type=\"note\" xlink:href=\"#L$href\">",1);
+          element($_) for $elem->content_list;
+          moretext("</a>",1);
+          return;
+        }
       }
     }
   } else {
@@ -619,7 +619,7 @@ sub element {
       my $eq=$elem->attr('http-equiv');
       my $content=$elem->attr('content');
       $Encoding=$1 if $eq && $content && lc($eq) eq "content-type" &&
-		      !$Encoding && $content =~ /charset=(\S+)/i;
+                      !$Encoding && $content =~ /charset=(\S+)/i;
     } elsif ($elem->tag eq "title") {
       $Title=$elem->as_text;
     } elsif ($elem->tag eq "style") {
@@ -742,12 +742,12 @@ sub remove_empty_sections {
   my $chl=$section->{chl};
   for (my $i=0;$i<=$#$chl;++$i) {
     if ((!defined($chl->[$i]{type}) || $chl->[$i]{type} eq 's') &&
-	!length($chl->[$i]{title}))
+        !length($chl->[$i]{title}))
     {
       my $n=@{$chl->[$i]{chl}};
       splice(@$chl,$i,1,@{$chl->[$i]{chl}});
       for (my $k=0;$k<$n;++$k) {
-	$chl->[$i+$k]{parent}=$section;
+        $chl->[$i+$k]{parent}=$section;
       }
       $i+=$n;
     } else {
@@ -788,13 +788,13 @@ print $outfile <<EOF ;
     <title-info>
       <genre></genre>
       <author>
-	<first-name>$auth[0]</first-name>
-	<middle-name>$auth[1]</middle-name>
-	<last-name>$auth[2]</last-name>
+        <first-name>$auth[0]</first-name>
+        <middle-name>$auth[1]</middle-name>
+        <last-name>$auth[2]</last-name>
       </author>
       <book-title>$Title</book-title>
       <annotation>
-	<p/>
+        <p/>
       </annotation>
     </title-info>
   </description>
@@ -833,20 +833,20 @@ sub section {
   if ($sect->{type} && $sect->{type} eq "p") {
     for (@{$sect->{chl}}) {
       if (defined($_->[0])) {
-	if ($_->[1]) {
-	  stopen($poem_open,$st_open,$indent);
-	  print $outfile " " x $indent, "<v",glink($_),">",$_->[0],"</v>\n";
-	} else {
-	  pstclose($poem_open,$st_open,$indent);
+        if ($_->[1]) {
+          stopen($poem_open,$st_open,$indent);
+          print $outfile " " x $indent, "<v",glink($_),">",$_->[0],"</v>\n";
+        } else {
+          pstclose($poem_open,$st_open,$indent);
           print $outfile " " x $indent, "<p",glink($_),">",$_->[0],"</p>\n"
-	}
+        }
       } else {
-	if ($_->[1]) {
-	  stclose($st_open,$indent);
-	} else {
-	  pstclose($poem_open,$st_open,$indent);
-	  print $outfile " " x $indent, "<empty-line/>\n";
-	}
+        if ($_->[1]) {
+          stclose($st_open,$indent);
+        } else {
+          pstclose($poem_open,$st_open,$indent);
+          print $outfile " " x $indent, "<empty-line/>\n";
+        }
       }
     }
     pstclose($poem_open,$st_open,$indent);

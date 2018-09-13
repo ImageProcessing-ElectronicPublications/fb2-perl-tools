@@ -93,29 +93,29 @@ use vars qw/
   /;
 
 %par = (
-	StrictInputCharset=>'cp1251',
-	ImageDir => 'NONE',
-	ImageUrl => '.',
-	CatdocCharsets => '/cmw/tables'
+        StrictInputCharset=>'cp1251',
+        ImageDir => 'NONE',
+        ImageUrl => '.',
+        CatdocCharsets => '/cmw/tables'
 );
 
 
 GetOptions(
-	   \%opt,
+           \%opt,
 
-	   qw/
-	   incharset=s
-	   outcharset=s
-	   strictincharset=s
-	   tables=s
+           qw/
+           incharset=s
+           outcharset=s
+           strictincharset=s
+           tables=s
 
-	   imgdircreate=s
-	   imgdir=s
-	   imgurl=s
-	   imgrmsrc!
+           imgdircreate=s
+           imgdir=s
+           imgurl=s
+           imgrmsrc!
 
-	   test
-	   /,
+           test
+           /,
 ) or die "Bad rtf2html options\n";
 
 $opt{imgdir}          and $par{ImageDir}           = $opt{imgdir};
@@ -136,7 +136,7 @@ $opt{tables} and $par{CatdocCharsets} = $opt{tables};
 #    my ($mime_name,$table_name) = split;
 #    $par{OutputCharset}=$table_name if $mime_name eq $par{OutputCharset};
 #  }
-# }  
+# }
 
 # die "Unknown output charset $par{OutputCharset}" if $par{OutputCharset} && ! -f "$par{CatdocCharsets}/$par{OutputCharset}.txt";
 
@@ -182,9 +182,9 @@ if ($par{ImageDir} ne 'NONE') {
 
 if ($opt{test} && defined($ARGV[1])) {
   my $nw = `weblint -d empty-container $ARGV[1] | wc -l`;
-  
+
   printf 
-    "%20s bytes: %7d -> %-6d %5.2f sec  warn: %2d\n", 
+    "%20s bytes: %7d -> %-6d %5.2f sec  warn: %2d\n",
     $ARGV[0],
     -s $ARGV[0],
     -s $ARGV[1],
@@ -192,4 +192,3 @@ if ($opt{test} && defined($ARGV[1])) {
     $nw
     ;
 }
-

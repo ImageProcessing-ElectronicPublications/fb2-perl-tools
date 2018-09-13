@@ -4,7 +4,7 @@ use strict;
 use XML::LibXML;
 
 
-my @inline_elsments=('a', 'book-name', 'book-title', 'city', 'code', 'custom-info', 'date',   
+my @inline_elsments=('a', 'book-name', 'book-title', 'city', 'code', 'custom-info', 'date', 
 'email', 'emphasis', 'first-name', 'genre', 'home-page', 'id', 'isbn', 'image', 'keywords', 'lang', 'last-name', 
 'middle-name', 'nickname', 'p', 'part', 'program-used', 'publish-info', 'publisher', 'sequence', 'src-lang', 'src-ocr', 
 'src-url', 'strikethrough', 'strong', 'sub', 'subtitle', 'sup', 'text-author', 'title', 'translator', 'v', 'version', 
@@ -16,7 +16,7 @@ foreach (@inline_elsments)
   $inline_elements_hash{$_}=1;
 }
 
-my $FileName= $ARGV[0];  
+my $FileName= $ARGV[0];
 my $parser = XML::LibXML->new();
 my $root = $parser->parse_file($FileName)->getDocumentElement();
 
@@ -52,7 +52,7 @@ sub normalize_branch
     normalize_branch($_,$level."  ") if ($_->nodeType() == XML_ELEMENT_NODE);
   }
 }
-  
+
 sub normalize_text_node
 {
   my $text_node=shift;
@@ -69,4 +69,3 @@ sub normalize_text_node
     $text_node->setData($text);
   }
 }
-  
