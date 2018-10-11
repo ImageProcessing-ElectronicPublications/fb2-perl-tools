@@ -11,7 +11,7 @@ fb2validate - Checks if the file is a valid fb2-book
 
 =head1 SYNOPSIS
 
-B<fb2validate> I<filename.fb2>
+B<fb2validate.pl> I<filename.fb2>
 
 =head1 DESCRIPTION
 

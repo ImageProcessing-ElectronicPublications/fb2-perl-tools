@@ -14,7 +14,7 @@ fb2_descr - extend description of fb2 file with all possible elements
 
 =head1 SYNOPSIS
 
-B<fb2_descr.pl> extend I<filename.fb2>
+B<fb2descr.pl> extend I<filename.fb2>
 
 =cut
 

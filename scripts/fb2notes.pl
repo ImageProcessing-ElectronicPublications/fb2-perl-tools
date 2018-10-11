@@ -13,11 +13,11 @@ fb2_notes - manipulate footnotes in the fb2 e-book
 
 =head1 SYNOPSIS
 
-B<fb2_notes> B<convert> [B<-k>=I<keyword>] [B<-n>=[I<1>|I<0>]] I<filename.fb2>
+B<fb2notes.pl> B<convert> [B<-k>=I<keyword>] [B<-n>=[I<1>|I<0>]] I<filename.fb2>
 
-B<fb2_notes> B<convert> <I<src_file.fb2> >I<dst_file.fb2>
+B<fb2notes.pl> B<convert> <I<src_file.fb2> >I<dst_file.fb2>
 
-B<fb2_notes> B<renumber> <I<src_file.fb2> >I<dst_file.fb2>
+B<fb2notes.pl> B<renumber> <I<src_file.fb2> >I<dst_file.fb2>
 
 =head1 DESCRIPTION
 

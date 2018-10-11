@@ -1,3 +1,10 @@
+0.02.2 (2018-10-11)
+    fb2/cleanFB2.pm -> fb2/Сlean.pm
+     - verify list fb2 tag
+    cleanFB2.pl -> fb2clean.pl
+    fb2images.pl -> fb2/Images.pm
+    fb2normalize.pl -> fb2/Normalize.pm
+
 0.02.1 (2018-09-13)
     fb2/cleanFB2.pm
      - removing harmful spaces

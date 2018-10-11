@@ -48,7 +48,7 @@ if (! @ARGV) { print "
 FB2 to HTMLs convertor v$VERSION
 Usage:
 
-fb22html  [-options] <inputfile.fb2>
+fb22html.pl  [-options] <inputfile.fb2>
 
   Options available
    --mute                 Do not print progress messages.

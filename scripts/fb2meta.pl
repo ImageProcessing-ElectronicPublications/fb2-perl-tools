@@ -9,30 +9,30 @@ fb2meta - manipulate meta information of FictionBook files collection
 
 =head1 SYNOPSIS
 
-B<fb2meta> B<list> [B<-t>|B<-f>I<pattern>] [I<directory>...]
+B<fb2meta.pl> B<list> [B<-t>|B<-f>I<pattern>] [I<directory>...]
 
-B<fb2meta> B<export> I<format> [I<directory>...]
+B<fb2meta.pl> B<export> I<format> [I<directory>...]
 
-B<fb2meta> B<uniq> [-c] I<attribute> [I<directory>...]
+B<fb2meta.pl> B<uniq> [-c] I<attribute> [I<directory>...]
 
-B<fb2meta> B<rename> [B<-z>] I<pattern>   [I<directrory>...]
+B<fb2meta.pl> B<rename> [B<-z>] I<pattern>   [I<directrory>...]
 
-B<fb2meta> B<update> [B<-s>] I<attribute>=I<value>  I<files...>
+B<fb2meta.pl> B<update> [B<-s>] I<attribute>=I<value>  I<files...>
 
-B<fb2meta> B<fix> I<attribute> I<filename> [I<directory>...]
+B<fb2meta.pl> B<fix> I<attribute> I<filename> [I<directory>...]
 
-B<fb2meta> B<find> [B<-0>] I<expression> [I<directory>...]
+B<fb2meta.pl> B<find> [B<-0>] I<expression> [I<directory>...]
 
 =cut
 
 
 sub HELP_MESSAGE {
-  print "fb2meta list [-t|-f pattern] [directory...]\n",
-  "fb2meta uniq [-c] attribute [directory...]\n",
-  "fb2meta rename [-z] pattern [directory...]\n",
-  "fb2meta find [-0] expression [directory...]\n",
-  "fb2meta update [-s] attribute=value [-s attribute=value...] files..\n",
-  "fb2meta fix attribute substtable [directory...]\n";
+  print "fb2meta.pl list [-t|-f pattern] [directory...]\n",
+  "fb2meta.pl uniq [-c] attribute [directory...]\n",
+  "fb2meta.pl rename [-z] pattern [directory...]\n",
+  "fb2meta.pl find [-0] expression [directory...]\n",
+  "fb2meta.pl update [-s] attribute=value [-s attribute=value...] files..\n",
+  "fb2meta.pl fix attribute substtable [directory...]\n";
   exit(1);
 }
 
@@ -132,7 +132,7 @@ Values for all attributes are treated literally. For B<sequence.num>
 attribute special value B<#> is supported, which is expanded to
 sequentual number of the processed file. So, you can use command
 
-  fb2meta update -s sequence="Some cool serial" -s sequence.num=# file1 file2 file3
+  fb2meta.pl update -s sequence="Some cool serial" -s sequence.num=# file1 file2 file3
 
 and file1 would be number 1 in this sequence, file2 - number2 etc.
 

@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
-package fb2::cleanFB2;
+package fb2::Clean;
 #Подчистка Fb2
 
 use XML::Parser;
@@ -32,34 +32,35 @@ use Encode;
 use utf8;
 #
 use Math::Random;
+our $VERSION=0.02.2;
 
 %encodings=(
     'ru'=>'utf-8',
     'rus'=>'windows-1251',
-    'en'=>'windows-1252',
-    'eng'=>'windows-1251',
-    'urk'=>'windows-1251',
-    'bel'=>'windows-1251',
+    'en'=>'utf-8',
+    'eng'=>'utf-8',
+    'urk'=>'utf-8',
+    'bel'=>'utf-8',
+    'fr'=>'iso-8859-1',
     'fra'=>'iso-8859-1',
     'fre'=>'iso-8859-1',
-    'fr'=>'iso-8859-1',
     'de'=>'iso-8859-1',
     'deu'=>'iso-8859-1',
     'ger'=>'iso-8859-1',
     'ara'=>'utf-8',
-    'cze'=>'iso-8859-2',
     'cs'=>'iso-8859-2',
+    'cze'=>'iso-8859-2',
     'ces'=>'iso-8859-2',
-    'est'=>'iso-8859-2',
     'et'=>'iso-8859-2',
-    'fin'=>'iso-8859-1',
+    'est'=>'iso-8859-2',
     'fi'=>'iso-8859-1',
+    'fin'=>'iso-8859-1',
     'ita'=>'iso-8859-1',
+    'sl'=>'iso-8859-2',
     'slk'=>'iso-8859-2',
     'slo'=>'iso-8859-2',
-    'sl'=>'iso-8859-2',
-    'swe'=>'iso-8859-1',
-    'sv'=>'iso-8859-1'
+    'sv'=>'iso-8859-1',
+    'swe'=>'iso-8859-1'
 );
 my %oldjenres=(
     Action=>'literature_adv',
@@ -151,9 +152,11 @@ sub GenerateDocInfo{
 <version>1.0</version>
 </document-info>};
 }
+
 sub RandChar{
     return chr(Math::Random::random_uniform(1,97,122));
 }
+
 sub CleanupFB2{
     my $FileToParce=shift;
     my $BookLang;
@@ -164,7 +167,7 @@ sub CleanupFB2{
     my %NotesLinks;
     my %RealImages;
     my %RealNotes;
-    
+
     print "Cleaning the file up...\n$FileToParce\n";
     my $CleanupParser=new XML::Parser(Handlers => {
       Start => sub {
@@ -239,7 +242,7 @@ sub CleanupFB2{
             $InLang=1 if $elem eq 'lang';
             $InSRCLang=1 if $elem eq 'src-lang';
             $InJenre=1 if $elem eq 'genre';
-            
+
             # Remember, where we are
             unshift(@Elems,$elem);
         },
@@ -259,7 +262,7 @@ sub CleanupFB2{
                 if ($LangFixes{$XText}){$XText=$LangFixes{$XText};print "Lang changed to: $XText\n"}
             }
             $BookLang.=$XText if $InLang;
-            $XMLBody.=xmlescapeLite($XText) if ($InHead or $Elems[0]=~/\A(v|p|subtitle|td|text-author|cite|a|style|strong|emphasis|binary)\Z/);
+            $XMLBody.=xmlescapeLite($XText) if ($InHead or $Elems[0]=~/\A(a|p|v|subtitle|style|th|td|text-author|cite|strong|emphasis|strikethrough|sub|sup|binary)\Z/);
       },
         End => sub {
 #           if ($_[1] eq 'description'){
@@ -299,7 +302,7 @@ sub CleanupFB2{
     print "Performing final text cleanup...\n" unless $Mute;
 
     # finall cleanup
-    
+
     $XMLBody=~s/\A\s+//;
     print "step  1\n";
     $XMLBody=~s/\s+\Z//;
@@ -364,14 +367,14 @@ sub CleanupFB2{
         push(@ImgWrong,$_) if !$RealImages{$_};
     }
     die "Image links points to inexistent ID!\n".join("\n",@ImgWrong) if @ImgWrong;
-    
-#   $!=16;
-#   my @NotesWrong;
-#   for (keys(%NotesLinks)){
-#       s/\A#//;
-#       push(@NotesWrong,$_) if !$RealNotes{$_};
-#   }
-#   die "Notes point to inexistent section ID!\n".join("\n",@NotesWrong) if @NotesWrong;
+
+    $!=16;
+    my @NotesWrong;
+    for (keys(%NotesLinks)){
+        s/\A#//;
+        push(@NotesWrong,$_) if !$RealNotes{$_};
+    }
+    die "Notes point to inexistent section ID!\n".join("\n",@NotesWrong) if @NotesWrong;
 
     $!=17;
     my @ImgWrong;
@@ -379,6 +382,7 @@ sub CleanupFB2{
         push(@ImgWrong,$_) if !$ImgLinks{'#'.$_};
     }
     die "Unused images 'detected!\n".join("\n",@ImgWrong) if @ImgWrong;
+
     $!=0;
 
     print "Lang: $BookLang\n";
@@ -395,13 +399,13 @@ sub CleanupFB2{
     print FILETOUPDATE $doc->toString(0) or die "error writing XML to file!\$!";
     close FILETOUPDATE;
 }
+
 sub xmlescapeLite {
     $b=shift;
   $_=$b;
   s/([&<>])/$escapesLite{$1}/gs;
   $_;
 }
-
 
 sub xmlescape {
     $b=shift;
