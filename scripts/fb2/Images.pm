@@ -73,7 +73,7 @@ sub AddImages
   {
     my $flag=1;
     my $ImageName=$_;
-    print "Adding image $_ ...\n";
+    print "Adding image $_ ... ";
     foreach (@{getImageList($doc)})
     {
       if ($_ eq $ImageName)
@@ -101,14 +101,15 @@ sub AddImages
       my $MimeType=  $mm->checktype_filename($ImageName);
       open(FILE, $ImageName) or die "$!";
       local($/) = undef;
-      my $Encoded= encode_base64(<FILE>);
+      my $Encoded= encode_base64(<FILE>,"");
       close (FILE);
       my $NewNode = $doc->createElement('binary');
       $NewNode->setAttribute ('id', $ImageName);
       $NewNode->setAttribute ('content-type',$MimeType);
-      $NewNode->appendChild($doc->createTextNode("\n".$Encoded));
+      $NewNode->appendChild($doc->createTextNode($Encoded));
       $doc->getDocumentElement()->appendChild($NewNode);
       $doc->getDocumentElement()->appendChild($doc->createTextNode("\n"));
+      print "Done\n";
       $flags->{'changed'}=1;
     }
   }

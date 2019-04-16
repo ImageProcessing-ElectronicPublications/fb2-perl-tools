@@ -1,3 +1,7 @@
+0.02.3 (2019-04-16)
+    fb2/Images.pm
+     - new format output
+
 0.02.2 (2018-10-11)
     fb2/cleanFB2.pm -> fb2/Сlean.pm
      - verify list fb2 tag
